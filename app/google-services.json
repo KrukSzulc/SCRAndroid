@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "961700551550",
+    "firebase_url": "https://real-time-systems-project.firebaseio.com",
+    "project_id": "real-time-systems-project",
+    "storage_bucket": "real-time-systems-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961700551550:android:f222fc6e2c108932",
+        "android_client_info": {
+          "package_name": "s.maciej.scrandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961700551550-rpk275l4p6bj47u31lk918g57fieq9q5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmKCtUEatzPTg-_JlSGfJzljn5HcR2yts"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
