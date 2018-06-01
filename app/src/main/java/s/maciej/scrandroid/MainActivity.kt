@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         Log.i("Model", "WYSYLAM  " + model.specialUuid)
         Firebase.updateObject(databaseReference, model)
-        Thread.sleep(500)
+        Thread.sleep(250)
 
         databaseReference.child("Queue").addValueEventListener(menuListener)
     }
@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         Firebase.updateObject(databaseReference, model)
 
-        Thread.sleep(1000)
+        Thread.sleep(250)
         Firebase.deleteObjectFromQueue(databaseReference, model.uuid)
         Firebase.addToCompleted(databaseReference, model)
        // Thread.sleep(500)
@@ -96,12 +96,13 @@ class MainActivity : AppCompatActivity() {
                         currentUuid = "clear"
                         model.blocked = true
                         makeTask(model)
-                    } else {
-                        model = list.first{it.specialUuid == ""}
+                    }
+                    else if(model.specialUuid == ""){
                         currentUuid = UUID.randomUUID().toString()
                         model.specialUuid = currentUuid as String
                         tryUpdate(model)
                     }
+
                 } else Log.i("Model", "CZEKAM + $licznik")
 
             }
