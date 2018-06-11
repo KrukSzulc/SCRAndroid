@@ -10,17 +10,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import s.maciej.scrandroid.data.ModelData
 import s.maciej.scrandroid.utils.Firebase
+import s.maciej.scrandroid.utils.calculate
 import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
+
     private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val list: MutableList<ModelData> = mutableListOf()
 
     private var button: TextView? = null
 
-    var currentUuid: String? = "X"
-    var currId: String? = ""
+    var currentUuid: String? = "XXXX"
 
     var licznik: Int = 0
 
@@ -36,6 +37,9 @@ class MainActivity : AppCompatActivity() {
 
         buton()
         downloadFromDb()
+
+        button!!.text = licznik.toString()
+
     }
 
     fun buton(): Disposable {
@@ -46,13 +50,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun clicked() {
-        Firebase.addData(databaseReference)
+       // Firebase.addData(databaseReference)
+        licznik = 0
+        button!!.text = licznik.toString()
     }
 
     fun tryUpdate(model: ModelData) {
         databaseReference.child("Queue").removeEventListener(menuListener)
 
-        Log.i("Model", "WYSYLAM  " + model.specialUuid)
         Firebase.updateObject(databaseReference, model)
         Thread.sleep(250)
 
@@ -67,47 +72,56 @@ class MainActivity : AppCompatActivity() {
 
         Firebase.updateObject(databaseReference, model)
 
-        Thread.sleep(250)
+        Thread.sleep(200)
+        button!!.text = licznik.toString()
+
+        model.content = calculate(model.a!!, model.b!!)
+
         Firebase.deleteObjectFromQueue(databaseReference, model.uuid)
         Firebase.addToCompleted(databaseReference, model)
-       // Thread.sleep(500)
+
         databaseReference.child("Queue").addValueEventListener(menuListener)
-
-
         Log.i("Model", "KONCZE TASK")
     }
-
 
 
     fun downloadFromDb() {
         menuListener = object : ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot?) {
-                list.clear()
-                p0!!.children.mapNotNullTo(list) { it.getValue<ModelData>(ModelData::class.java) }
 
-                if ( list.count{it.blocked == false} >0) {
+                    list.clear()
+                    p0!!.children.mapNotNullTo(list) { it.getValue<ModelData>(ModelData::class.java) }
 
-                    var model: ModelData = list.first{ !it.blocked }
+                    if (list.count { it.blocked == false && it.uuid != "ss" } > 0) {
 
-                    Log.i("Model", "AKTUALNE ID ${model.specialUuid}")
+                        var model: ModelData = list.first { !it.blocked && it.uuid != "ss" }
 
-                    if (model.specialUuid == currentUuid!!) {
-                        currentUuid = "clear"
-                        model.blocked = true
-                        makeTask(model)
-                    }
-                    else if(model.specialUuid == ""){
-                        currentUuid = UUID.randomUUID().toString()
-                        model.specialUuid = currentUuid as String
-                        tryUpdate(model)
-                    }
+                        Log.i("Model", "AKTUALNE ID ${model.specialUuid}")
 
-                } else Log.i("Model", "CZEKAM + $licznik")
+                        if (model.specialUuid == currentUuid!!) {
+                            currentUuid = "clear"
+                            model.blocked = true
+                            makeTask(model)
+
+                        } else if (model.specialUuid == "") {
+                            Log.i("Model", "PROBUJE PRZYPISAC")
+                            currentUuid = UUID.randomUUID().toString()
+                            model.specialUuid = currentUuid as String
+                            tryUpdate(model)
+                        } else if (model.specialUuid != "" && model.blocked == false) {
+                            Log.i("Model", "WYJATEK CZEKAM")
+                           /* model.blocked = false
+                            model.specialUuid = ""
+                            tryUpdate(model)*/
+                        }
+
+                    } else Log.i("Model", "CZEKAM + $licznik")
+
 
             }
+
             override fun onCancelled(p0: DatabaseError?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         }
 

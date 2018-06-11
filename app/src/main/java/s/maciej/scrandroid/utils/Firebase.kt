@@ -3,6 +3,9 @@ package s.maciej.scrandroid.utils
 import android.util.Log
 import com.google.firebase.database.DatabaseReference
 import s.maciej.scrandroid.data.ModelData
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class Firebase {
 
@@ -10,8 +13,8 @@ class Firebase {
         fun addData(firebaseData: DatabaseReference) {
             val models: MutableList<ModelData?> = mutableListOf()
 
-            for (i in 0..1){
-                models.add(ModelData("", 3, ""))
+            for (i in 0..15) {
+                models.add(ModelData(0, 3, 3, 0, "","","",false))
             }
 
             models.forEach {
@@ -23,7 +26,7 @@ class Firebase {
 
         }
 
-        fun addToCompleted(databaseReference: DatabaseReference,model: ModelData){
+        fun addToCompleted(databaseReference: DatabaseReference, model: ModelData) {
             try {
                 Log.i("Model", "DODAJE DO COMPLETED")
 
@@ -37,6 +40,9 @@ class Firebase {
 
 
         fun updateObject(databaseReference: DatabaseReference, model: ModelData) {
+            val cal = Calendar.getInstance()
+            val sdf = SimpleDateFormat("HH:mm:ss")
+            model.time = sdf.format(cal.time)
             try {
                 databaseReference.child("Queue")
                         .child(model.uuid)
